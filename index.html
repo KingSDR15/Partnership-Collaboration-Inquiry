@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Partnership / Collaboration Inquiry</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f9fb;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --accent-2:#06b6d4;
+    --success:#059669;
+    --radius:12px;
+    --glass: rgba(8,16,30,0.02);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: linear-gradient(180deg,#ffffff 0%, #f1f6fb 100%);
+    color:#0f1724;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:20px;
+  }
+
+  .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+  @media (max-width:980px){ .wrap{grid-template-columns:1fr;padding:12px} }
+
+  .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 30px rgba(17,24,39,0.06);border:1px solid rgba(15,23,42,0.04)}
+  header h1{margin:0;font-size:20px;font-weight:700}
+  header p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+
+  form{margin-top:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:680px){ .grid{grid-template-columns:1fr} }
+
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input[type="text"],input[type="email"],input[type="tel"],input[type="url"],select,textarea{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:transparent;color:inherit;font-size:14px;outline:none;
+  }
+  input:focus,textarea:focus,select:focus{ box-shadow:0 6px 18px rgba(37,99,235,0.08);transform:translateY(-1px) }
+
+  textarea{min-height:110px;resize:vertical}
+  .full{grid-column:1 / -1}
+  .hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+  .btn{
+    display:inline-flex;gap:10px;align-items:center;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;
+  }
+  .ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:9px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+  .muted{color:var(--muted)}
+
+  .side{position:sticky;top:20px}
+  .logo{display:flex;gap:12px;align-items:center}
+  .mark{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+
+  /* Terms modal (light) */
+  .modal-backdrop{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(2,6,23,0.35);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+  .modal{max-width:920px;width:100%;max-height:88vh;overflow:auto;border-radius:12px;padding:22px;background:var(--card);box-shadow:0 20px 60px rgba(2,6,23,0.08);border:1px solid rgba(15,23,42,0.04)}
+  .modal h2{margin-top:0}
+  .modal .content{padding:8px 0;color:#0b1220}
+
+  /* PRELOADER */
+  #preloader{position:fixed;inset:0;background:linear-gradient(180deg,#ffffff,#e9f4ff);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column}
+  .brand-spin{width:84px;height:84px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:28px;box-shadow:0 12px 44px rgba(37,99,235,0.12)}
+  .loader-dot{margin-top:14px;display:flex;gap:8px}
+  .loader-dot span{width:10px;height:10px;border-radius:50%;background:rgba(3,7,18,0.18);display:inline-block;animation:jump 1s infinite ease-in-out}
+  .loader-dot span:nth-child(1){animation-delay:0s}
+  .loader-dot span:nth-child(2){animation-delay:0.12s}
+  .loader-dot span:nth-child(3){animation-delay:0.24s}
+  @keyframes jump{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+
+  /* overlay spinner during submit */
+  .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:90;background:rgba(255,255,255,0.6)}
+  .spinner{width:46px;height:46px;border-radius:50%;border:5px solid rgba(2,6,23,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* success box */
+  .success{position:fixed;right:18px;bottom:18px;width:360px;z-index:95;display:none;background:var(--card);padding:16px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.06);border:1px solid rgba(15,23,42,0.04)}
+  .success.visible{display:block}
+  .cta-row{display:flex;gap:8px;justify-content:center;margin-top:12px}
+
+  .file-input{display:flex;align-items:center;gap:10px}
+  .file-name{font-size:13px;color:var(--muted)}
+  footer{margin-top:18px;color:var(--muted);font-size:12px;text-align:center}
+
+  /* Preloader enhancements */
+  #preloader .brand-spin svg { display:block; }
+  /* small responsive tweaks */
+  @media (max-width:600px) {
+    .brand-spin{width:64px;height:64px}
+    .success{right:12px;left:12px;width:auto}
+  }
+</style>
+</head>
+<body>
+  <!-- Preloader (single, correct block) -->
+  <div id="preloader" aria-hidden="false">
+    <div class="brand-spin" aria-hidden="true" role="img" aria-label="Partnership icon">
+      <!-- Handshake / partnership SVG icon -->
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M2 13c0 1.1.9 2 2 2h3l3 3 4-4 2 2 1-1 2-2v-2l-3-3-2 2-2-2-3 3-2-2H4c-1.1 0-2 .9-2 2z" fill="white" opacity="0.08"/>
+        <path d="M7.5 12.5l1.5 1.5 2-2-1.5-1.5-2 2z" fill="white"/>
+        <path d="M12.5 7.5l3 3 2-2-3-3-2 2z" fill="white"/>
+        <path d="M5 16l3-3 1.5 1.5L6.5 17.5 5 16z" fill="white" opacity="0.9"/>
+      </svg>
+    </div>
+
+    <div style="margin-top:14px;font-weight:700;color:var(--muted)">Preparing partnership form…</div>
+
+    <div class="loader-dot" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="wrap" id="app" style="visibility:hidden;opacity:0;transition:opacity .28s ease,visibility .01s linear">
+    <main class="card">
+      <header>
+        <h1>Partnership / Collaboration Inquiry</h1>
+        <p>Apply to collaborate — fill the form below, accept the terms, then copy and send your submission to the brand.</p>
+      </header>
+
+      <form id="form" autocomplete="on" novalidate>
+        <div class="grid" role="group" aria-labelledby="personal-info">
+          <div>
+            <label for="fullName">Full name *</label>
+            <input id="fullName" name="fullName" type="text" required placeholder="Jane Doe">
+          </div>
+          <div>
+            <label for="email">Email address *</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com">
+          </div>
+
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="+1 555 123 4567">
+          </div>
+          <div>
+            <label for="country">Country</label>
+            <input id="country" name="country" type="text" placeholder="United States">
+          </div>
+
+          <div class="full">
+            <label for="bio">Full delivery address</label>
+            <textarea id="bio" name="bio" placeholder="Street, City, State, ZIP"></textarea>
+          </div>
+
+          <div>
+            <label for="instagram">Instagram (URL)</label>
+            <input id="instagram" name="instagram" type="url" placeholder="https://instagram.com/yourhandle">
+          </div>
+          <div>
+            <label for="tiktok">TikTok (URL)</label>
+            <input id="tiktok" name="tiktok" type="url" placeholder="https://tiktok.com/@you">
+          </div>
+
+          <div>
+            <label for="youtube">YouTube (URL)</label>
+            <input id="youtube" name="youtube" type="url" placeholder="https://youtube.com/channel/...">
+          </div>
+          <div>
+            <label for="facebook">Facebook (URL)</label>
+            <input id="facebook" name="facebook" type="url" placeholder="https://facebook.com/yourpage">
+          </div>
+
+          <div>
+            <label for="followers">Primary platform follower count *</label>
+            <input id="followers" name="followers" type="text" required placeholder="e.g. 125,000">
+          </div>
+          <div>
+            <label for="engagement">Average Engagement Rate (%)</label>
+            <input id="engagement" name="engagement" type="text" placeholder="e.g. 3.4">
+          </div>
+
+          <div>
+            <label for="niches">Content niches / categories</label>
+            <input id="niches" name="niches" type="text" placeholder="Fashion, beauty, lifestyle, tech">
+          </div>
+          <div>
+            <label for="rates">Typical rates / price guide</label>
+            <input id="rates" name="rates" type="text" placeholder="e.g. Sponsored post $X, Reel $Y">
+          </div>
+
+          <div class="full">
+            <label for="portfolio">Portfolio / media kit links</label>
+            <input id="portfolio" name="portfolio" type="url" placeholder="Link to media kit, drive folder, or linktree">
+            <div class="hint">Optional: upload a media kit below.</div>
+          </div>
+
+          <div>
+            <label for="availability">Availability (start date / windows)</label>
+            <input id="availability" name="availability" type="text" placeholder="Available from Jan 2026, Mon-Fri">
+          </div>
+
+          <div>
+            <label for="additional">Anything else we should know?</label>
+            <input id="additional" name="additional" type="text" placeholder="Partnership preferences, exclusivity issues, etc.">
+          </div>
+
+          <div class="full">
+            <label>Items selected by the brand</label>
+            <div style="padding:10px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:linear-gradient(180deg,#fff,#fbfdff);font-weight:600">
+              20 items selected by the brand — influencer does not need to select items
+            </div>
+            <div class="hint">The brand will select and provide 20 items for this collaboration. Products are provided tax-free; local dispatch/carrier handling fees (if any) required by a local agent are the influencer’s responsibility unless agreed otherwise.</div>
+          </div>
+
+          <div class="full">
+            <label for="mediaKit">Upload media kit (optional)</label>
+            <div class="file-input">
+              <input id="mediaKit" name="mediaKit" type="file" accept=".pdf,.png,.jpg,.jpeg,.zip" />
+              <div class="file-name muted" id="fileName">No file chosen</div>
+            </div>
+            <div class="hint">Files are not uploaded by this sample — integrate server-side upload for production.</div>
+          </div>
+
+          <!-- Payment section -->
+          <div class="full" style="margin-top:6px">
+            <label style="font-weight:700">Preferred payment method for compensation</label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+              <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="paymentMethod" value="bank" checked> Bank Transfer</label>
+              <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="paymentMethod" value="paypal"> PayPal</label>
+              <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="paymentMethod" value="mobile"> Mobile Money</label>
+            </div>
+
+            <div id="bankFields" style="margin-top:12px">
+              <div class="grid">
+                <div>
+                  <label for="bankName">Bank name *</label>
+                  <input id="bankName" name="bankName" type="text" placeholder="Bank of America" />
+                </div>
+                <div>
+                  <label for="accountName">Account name *</label>
+                  <input id="accountName" name="accountName" type="text" placeholder="John Doe" />
+                </div>
+                <div>
+                  <label for="accountNumber">Account number *</label>
+                  <input id="accountNumber" name="accountNumber" type="text" placeholder="0123456789" />
+                </div>
+                <div>
+                  <label for="routingNumber">Routing number *</label>
+                  <input id="routingNumber" name="routingNumber" type="text" placeholder="111000025" />
+                </div>
+                <div>
+                  <label for="branch">Branch (optional)</label>
+                  <input id="branch" name="branch" type="text" placeholder="Los Angeles, CA" />
+                </div>
+                <div>
+                  <label for="bankCountry">Bank country *</label>
+                  <input id="bankCountry" name="bankCountry" type="text" placeholder="United States" />
+                </div>
+              </div>
+              <div class="hint">All bank details are requested so we can remit compensation securely. Keep these details accurate.</div>
+            </div>
+
+            <div id="paypalFields" style="display:none;margin-top:12px">
+              <label for="paypalEmail">PayPal Email *</label>
+              <input id="paypalEmail" name="paypalEmail" type="email" placeholder="paypal@example.com" />
+            </div>
+
+            <div id="mobileFields" style="display:none;margin-top:12px">
+              <div class="grid">
+                <div>
+                  <label for="mobileProvider">Mobile Money provider *</label>
+                  <input id="mobileProvider" name="mobileProvider" type="text" placeholder="Cash App / Zelle / Venmo" />
+                </div>
+                <div>
+                  <label for="mobileNumber">Mobile number *</label>
+                  <input id="mobileNumber" name="mobileNumber" type="tel" placeholder="+1 555 123 4567" />
+                </div>
+              </div>
+              <div class="hint">Provide the mobile money details where you would like to receive payments.</div>
+            </div>
+
+            <div class="hint" style="margin-top:10px">Note: The $1,000 sign-on bond will be released within <strong>2–3 business days</strong> after dispatch confirmation and completion of initial onboarding. All collaboration items are tax-free; if a dispatch/delivery fee applies it will be managed by you or reimbursed if agreed (submit receipts).</div>
+
+          </div>
+
+        </div>
+
+        <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <label style="display:flex;gap:8px;align-items:center">
+            <input id="acceptTnc" name="acceptTnc" type="checkbox" required />
+            <span class="muted" style="font-size:13px">I have read and accept the <button type="button" id="openTerms" class="ghost" style="padding:6px 8px;border-radius:8px">Terms & Conditions</button> *</span>
+          </label>
+
+          <button type="submit" class="btn" id="submitBtn">Submit Application</button>
+          <button type="button" class="ghost" id="downloadBtn">Download summary</button>
+          <button type="button" class="ghost" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="hint" style="margin-top:10px;color:var(--muted)">
+          After submission you must <strong>copy the submission summary</strong> and <strong>send it to the brand</strong>.
+        </div>
+      </form>
+
+      <footer>© <span id="year"></span> All rights reserved.</footer>
+    </main>
+
+    <aside class="side">
+      <div class="card">
+        <div class="logo">
+          <div class="mark">P</div>
+          <div>
+            <div style="font-weight:800">Partnerships Team</div>
+            <div class="muted" style="font-size:13px">We evaluate applications and will respond.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="font-size:13px;color:var(--muted)">What we expect</div>
+          <ul style="padding-left:18px;margin-top:8px;color:var(--muted)">
+            <li>Active, authentic social accounts</li>
+            <li>Clear metrics & a media kit</li>
+            <li>Professional conduct & adherence to briefs</li>
+          </ul>
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="font-size:13px;color:var(--muted)">Quick actions</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="ghost" id="previewTerms">Preview terms</button>
+            <button class="ghost" id="copyInstructions">Copy instructions</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Terms modal -->
+  <div id="modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="tncTitle">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 id="tncTitle">Partnership — Terms & Conditions</h2>
+        <button class="ghost" id="closeModal">Close</button>
+      </div>
+      <div class="content" id="tncContent">
+        <!-- content injected via JS (polished terms) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- overlay spinner -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div style="text-align:center">
+      <div class="spinner" aria-hidden="true"></div>
+      <div style="margin-top:10px;font-weight:700;color:var(--muted)">Submitting…</div>
+    </div>
+  </div>
+
+  <!-- success box -->
+  <div id="success" class="success" role="status" aria-live="polite">
+    <div style="font-weight:800;color:var(--success)">Submitted</div>
+    <div id="successText" style="margin-top:8px;color:var(--muted);font-size:14px">
+      Your application has been recorded. Please copy the submission summary and send it to the brand at <strong id="brandEmailDisplay"></strong>.
+    </div>
+
+    <div class="cta-row" style="margin-top:12px">
+      <button id="copyBtn" class="btn">Copy summary</button>
+      <button id="downloadBtn2" class="ghost">Download .txt</button>
+      <button id="openMailBtn" class="ghost">Open email draft</button>
+    </div>
+  </div>
+
+<script>
+  // ===== Configuration =====
+  const BRAND_EMAIL = "partnerships@yourbrand.com"; // <-- change to real brand email if needed
+
+  // Elements
+  const preloader = document.getElementById('preloader');
+  const app = document.getElementById('app');
+  const formEl = document.getElementById('form');
+  const overlay = document.getElementById('overlay');
+  const success = document.getElementById('success');
+  const successText = document.getElementById('successText');
+  const copyBtn = document.getElementById('copyBtn');
+  const downloadBtn2 = document.getElementById('downloadBtn2');
+  const openMailBtn = document.getElementById('openMailBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const fileInput = document.getElementById('mediaKit');
+  const fileName = document.getElementById('fileName');
+  const yearEl = document.getElementById('year');
+  const brandEmailDisplay = document.getElementById('brandEmailDisplay');
+
+  yearEl.textContent = new Date().getFullYear();
+  brandEmailDisplay.textContent = BRAND_EMAIL;
+
+  // Remove preloader when page fully loaded
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if(preloader){
+        preloader.style.transition = "opacity .28s ease";
+        preloader.style.opacity = 0;
+        preloader.setAttribute('aria-hidden','true');
+        setTimeout(()=> preloader.style.display = "none", 320);
+      }
+      app.style.visibility = "visible";
+      app.style.opacity = 1;
+    }, 500);
+  });
+
+  // Inject polished Terms & Conditions using innerHTML
+  (function injectTerms(){
+    const TERMS = `
+      <section aria-label="Partnership Terms">
+        <h3 style="margin-top:0">Contract Terms — Summary</h3>
+
+        <p><strong>1. Engagement & Payment</strong><br>
+        The Company engages the Contractor (the Influencer) to produce and publish promotional content in accordance with the scope agreed between the parties. The Influencer agrees to perform services promptly and professionally upon receipt of any materials or instructions. Proposed compensation is <strong>$3,000.00 per month</strong> with a one-time sign-on bond of <strong>$1,000.00</strong>, payable after onboarding and dispatch confirmation as set out below. Payment timing, approved reimbursements and late-payment remedies follow the Company’s standard payment procedures.</p>
+
+        <p><strong>2. Work Standards & Deliverables</strong><br>
+        All deliverables must comply with the Company’s brand guidelines, content specifications and deadlines. The Influencer must ensure professional presentation and follow the creative brief and any delivery schedules provided by the Company.</p>
+
+        <p><strong>3. Ownership & License</strong><br>
+        The Influencer retains ownership of any original creative materials they produce. By entering this Agreement the Influencer grants the Company a perpetual, worldwide, non-exclusive, royalty-free license to use, reproduce, modify and publish the content for brand marketing across any medium.</p>
+
+        <p><strong>4. Term</strong><br>
+        Unless otherwise agreed in writing, the term is twelve (12) months from the Effective Date. Any renewal or extension requires the written agreement of both parties.</p>
+
+        <p><strong>5. Shipping, Taxes & Local Dispatch Fees</strong><br>
+        The Company will select and supply the products for the collaboration. <strong>A total of twenty (20) items will be selected by the brand — the Influencer is not required to choose items.</strong> All products supplied under this Agreement are provided tax-free (the Company covers any product duties and taxes where applicable). <strong>However, local dispatch or carrier handling fees that may be required by a local delivery agent in the Influencer’s city or region are the responsibility of the Influencer.</strong> The Company will notify the Influencer in advance if such a local dispatch fee is anticipated and will provide guidance on payment and any available reimbursement process. If the Company offers to reimburse such fees, the Influencer must submit valid receipts or proof of payment in accordance with the reimbursement procedures.</p>
+
+        <p><strong>6. Bond & Payout Timing</strong><br>
+        Upon confirmation that products have been dispatched and after the Influencer completes onboarding requirements, the Company will release the one-time sign-on bond of <strong>$1,000.00</strong>. Bond disbursement will occur within <strong>2–3 business days</strong> following dispatch confirmation and onboarding completion.</p>
+
+        <p><strong>7. Verification & Account Integrity</strong><br>
+        The Influencer must maintain active and authentic social accounts and may be required to provide platform analytics or verification on request. The use of fraudulent or artificially inflated metrics (including purchased followers, bots, or engagement manipulation) is strictly prohibited and may result in corrective action including suspension or termination of the collaboration.</p>
+
+        <p><strong>8. Reimbursement & Expenses</strong><br>
+        Reimbursable expenses require prior written approval and must be supported by original receipts or invoices. Approved reimbursements will be processed according to the Company’s payment schedule.</p>
+
+        <p><strong>9. Governing Law & Entire Agreement</strong><br>
+        This document is a template overview of key terms and does not replace a full written contract. The final Agreement will govern and should be reviewed by legal counsel. Unless otherwise specified, the Agreement is governed by the laws of the jurisdiction in which the Company operates.</p>
+
+        <p><strong>10. Acceptance</strong><br>
+        By submitting this form the Influencer confirms that they have read, understood and accepted these terms and that they are legally authorized to enter this Agreement.</p>
+
+        <p class="muted" style="color:#6b7280;font-size:13px">Disclaimer: These terms constitute a legitimate collaboration agreement. By submitting this form, you acknowledge that you have reviewed, understood, and accepted the terms provided, and are prepared to proceed with the partnership under the conditions outlined.</p>
+      </section>
+    `;
+    const target = document.getElementById('tncContent');
+    if(target) target.innerHTML = TERMS;
+  })();
+
+  // Modal controls
+  const modal = document.getElementById('modal');
+  const openTerms = document.getElementById('openTerms');
+  const closeModal = document.getElementById('closeModal');
+  const previewTerms = document.getElementById('previewTerms');
+
+  function openModal(){ modal.style.display = "flex"; modal.setAttribute('aria-hidden','false'); }
+  function closeModalFn(){ modal.style.display = "none"; modal.setAttribute('aria-hidden','true'); }
+
+  openTerms.addEventListener('click', openModal);
+  previewTerms.addEventListener('click', openModal);
+  closeModal.addEventListener('click', closeModalFn);
+  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModalFn(); });
+
+  // file name display
+  fileInput.addEventListener('change', ()=>{
+    if(fileInput.files && fileInput.files[0]) fileName.textContent = fileInput.files[0].name;
+    else fileName.textContent = "No file chosen";
+  });
+
+  // Payment method toggles
+  const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+  const bankFields = document.getElementById('bankFields');
+  const paypalFields = document.getElementById('paypalFields');
+  const mobileFields = document.getElementById('mobileFields');
+
+  function updatePaymentFields(){
+    const sel = document.querySelector('input[name="paymentMethod"]:checked');
+    const val = sel ? sel.value : 'bank';
+    bankFields.style.display = val === 'bank' ? 'block' : 'none';
+    paypalFields.style.display = val === 'paypal' ? 'block' : 'none';
+    mobileFields.style.display = val === 'mobile' ? 'block' : 'none';
+
+    // set required attributes depending on selection
+    document.getElementById('bankName').required = val === 'bank';
+    document.getElementById('accountName').required = val === 'bank';
+    document.getElementById('accountNumber').required = val === 'bank';
+    document.getElementById('routingNumber').required = val === 'bank';
+    document.getElementById('bankCountry').required = val === 'bank';
+
+    document.getElementById('paypalEmail').required = val === 'paypal';
+    document.getElementById('mobileProvider').required = val === 'mobile';
+    document.getElementById('mobileNumber').required = val === 'mobile';
+  }
+
+  paymentRadios.forEach(r => r.addEventListener('change', updatePaymentFields));
+  updatePaymentFields();
+
+  // Build summary text
+  function buildSummary(formData){
+    const paymentMethod = formData.get('paymentMethod') || 'bank';
+    const paymentDetails = {};
+    if(paymentMethod === 'bank'){
+      paymentDetails.type = 'Bank Transfer';
+      paymentDetails.bankName = formData.get('bankName') || '';
+      paymentDetails.accountName = formData.get('accountName') || '';
+      paymentDetails.accountNumber = formData.get('accountNumber') || '';
+      paymentDetails.routingNumber = formData.get('routingNumber') || '';
+      paymentDetails.branch = formData.get('branch') || '';
+      paymentDetails.bankCountry = formData.get('bankCountry') || '';
+    } else if(paymentMethod === 'paypal'){
+      paymentDetails.type = 'PayPal';
+      paymentDetails.paypalEmail = formData.get('paypalEmail') || '';
+    } else {
+      paymentDetails.type = 'Mobile Money';
+      paymentDetails.provider = formData.get('mobileProvider') || '';
+      paymentDetails.mobileNumber = formData.get('mobileNumber') || '';
+    }
+
+    const summary = {
+      name: formData.get('fullName') || '',
+      email: formData.get('email') || '',
+      phone: formData.get('phone') || '',
+      country: formData.get('country') || '',
+      address: formData.get('bio') || '',
+      instagram: formData.get('instagram') || '',
+      tiktok: formData.get('tiktok') || '',
+      youtube: formData.get('youtube') || '',
+      facebook: formData.get('facebook') || '',
+      followers: formData.get('followers') || '',
+      engagement: formData.get('engagement') || '',
+      niches: formData.get('niches') || '',
+      rates: formData.get('rates') || '',
+      portfolio: formData.get('portfolio') || '',
+      availability: formData.get('availability') || '',
+      additional: formData.get('additional') || '',
+      mediaKitFile: fileInput.files[0] ? fileInput.files[0].name : 'None',
+      itemsSelectedByBrand: '20 items selected by the brand — influencer does not need to select items',
+      payment: paymentDetails,
+      acceptedTerms: formData.get('acceptTnc') ? 'Yes' : 'No',
+      submittedAt: (new Date()).toLocaleString()
+    };
+
+    const lines = [
+      "Partnership Submission",
+      "----------------------",
+      `Name: ${summary.name}`,
+      `Email: ${summary.email}`,
+      `Phone: ${summary.phone}`,
+      `Country: ${summary.country}`,
+      `Address: ${summary.address}`,
+      `Instagram: ${summary.instagram}`,
+      `TikTok: ${summary.tiktok}`,
+      `YouTube: ${summary.youtube}`,
+      `Facebook: ${summary.facebook}`,
+      `Primary followers: ${summary.followers}`,
+      `Avg engagement rate: ${summary.engagement}`,
+      `Niches: ${summary.niches}`,
+      `Rates: ${summary.rates}`,
+      `Portfolio / kit: ${summary.portfolio}`,
+      `Availability: ${summary.availability}`,
+      `Additional notes: ${summary.additional}`,
+      `Media kit (file): ${summary.mediaKitFile}`,
+      `${summary.itemsSelectedByBrand}`,
+      "-- Payment details --",
+      `Preferred payment method: ${summary.payment.type}`
+    ];
+
+    if(summary.payment.type === 'Bank Transfer'){
+      lines.push(`Bank name: ${summary.payment.bankName}`);
+      lines.push(`Account name: ${summary.payment.accountName}`);
+      lines.push(`Account number: ${summary.payment.accountNumber}`);
+      lines.push(`Routing number: ${summary.payment.routingNumber}`);
+      lines.push(`Branch: ${summary.payment.branch}`);
+      lines.push(`Bank country: ${summary.payment.bankCountry}`);
+    } else if(summary.payment.type === 'PayPal'){
+      lines.push(`PayPal email: ${summary.payment.paypalEmail}`);
+    } else {
+      lines.push(`Provider: ${summary.payment.provider}`);
+      lines.push(`Mobile number: ${summary.payment.mobileNumber}`);
+    }
+
+    lines.push(`Accepted T&Cs: ${summary.acceptedTerms}`);
+    lines.push(`Submitted: ${summary.submittedAt}`);
+    lines.push("----------------------");
+    lines.push("Please copy and paste this summary into an email to the brand address provided by the platform.");
+
+    return { object: summary, text: lines.join("\n") };
+  }
+
+  // Copy to clipboard
+  async function copyToClipboard(text){
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return true;
+      } catch(e2){
+        return false;
+      }
+    }
+  }
+
+  // Download text
+  function downloadText(filename, text){
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Email draft (opens mail client with subject & prefilled short instruction)
+  function openMailDraft(subject, body){
+    const mailto = `mailto:${encodeURIComponent(BRAND_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  }
+
+  // Form submit handler
+  formEl.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!formEl.checkValidity()){
+      formEl.reportValidity();
+      return;
+    }
+
+    const fd = new FormData(formEl);
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden','false');
+
+    const sum = buildSummary(fd);
+
+    setTimeout(async ()=>{
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden','true');
+
+      success.classList.add('visible');
+      successText.innerHTML = `Your application has been recorded. <strong>Please copy the submission summary</strong> and send it to the brand at <strong>${BRAND_EMAIL}</strong>.`;
+
+      window._latestSubmission = sum;
+    }, 900);
+  });
+
+  // Buttons
+  copyBtn.addEventListener('click', async ()=>{
+    if(!window._latestSubmission){
+      const fd = new FormData(formEl);
+      window._latestSubmission = buildSummary(fd);
+    }
+    const ok = await copyToClipboard(window._latestSubmission.text);
+    copyBtn.textContent = ok ? "Copied" : "Copy (failed)";
+    setTimeout(()=> copyBtn.textContent = "Copy summary", 2500);
+  });
+
+  downloadBtn2.addEventListener('click', ()=>{
+    if(!window._latestSubmission){
+      const fd = new FormData(formEl);
+      window._latestSubmission = buildSummary(fd);
+    }
+    const filename = `partnership-submission-${Date.now()}.txt`;
+    downloadText(filename, window._latestSubmission.text);
+  });
+
+  openMailBtn.addEventListener('click', ()=>{
+    if(!window._latestSubmission){
+      const fd = new FormData(formEl);
+      window._latestSubmission = buildSummary(fd);
+    }
+    const subject = `Partnership submission — ${window._latestSubmission.object.name || 'Unnamed'}`;
+    const body = "Hello,\n\nPlease find my partnership submission below (paste the copied summary here):\n\n";
+    openMailDraft(subject, body);
+  });
+
+  // top download button (from form area)
+  downloadBtn.addEventListener('click', ()=>{
+    const fd = new FormData(formEl);
+    const sum = buildSummary(fd);
+    downloadText(`partnership-submission-${Date.now()}.txt`, sum.text);
+  });
+
+  clearBtn.addEventListener('click', ()=> formEl.reset());
+
+  // copy instructions button in aside
+  document.getElementById('copyInstructions').addEventListener('click', ()=>{
+    const instr = `After you submit: 1) Click "Copy summary" 2) Open your email client and paste the content into a new message to ${BRAND_EMAIL} 3) Send.`;
+    copyToClipboard(instr);
+    alert("Instructions copied to clipboard. Paste them where useful.");
+  });
+
+  // accessibility: close modal with Escape
+  window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModalFn(); });
+
+</script>
+</body>
+</html>
