@@ -6,97 +6,265 @@
 <title>Partnership / Collaboration Inquiry</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#f6f9fb;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --accent:#2563eb;
-    --accent-2:#06b6d4;
-    --success:#059669;
-    --radius:12px;
-    --glass: rgba(8,16,30,0.02);
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    color-scheme: light;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    background: linear-gradient(180deg,#ffffff 0%, #f1f6fb 100%);
-    color:#0f1724;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding:20px;
-  }
+/* ===========================
+   Mobile-first Responsive UI
+   =========================== */
 
-  .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
-  @media (max-width:980px){ .wrap{grid-template-columns:1fr;padding:12px} }
+:root{
+  /* color system (light defaults) */
+  --bg: #f6f9fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0f1724;
+  --accent: #2563eb;
+  --accent-2: #06b6d4;
+  --success: #059669;
+  --radius: 12px;
+  --glass: rgba(8,16,30,0.02);
+  --shadow-1: 0 8px 30px rgba(17,24,39,0.06);
+  --glass-strong: rgba(255,255,255,0.7);
+  --focus-ring: 0 6px 18px rgba(37,99,235,0.12);
+  --ui-gap: clamp(12px, 2vw, 24px);
+  --container-max: 1100px;
 
-  .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 30px rgba(17,24,39,0.06);border:1px solid rgba(15,23,42,0.04)}
-  header h1{margin:0;font-size:20px;font-weight:700}
-  header p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+  /* typography */
+  --ff-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --base-font: 1rem; /* 16px base, scale with clamp below */
+  color-scheme: light;
+}
 
-  form{margin-top:12px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media (max-width:680px){ .grid{grid-template-columns:1fr} }
+/* Dark theme override when [data-theme="dark"] on <html> */
+:root[data-theme="dark"]{
+  --bg: #071126;
+  --card: rgba(6,10,16,0.72);
+  --muted: #9aa4b2;
+  --text: #e6eef8;
+  --glass-strong: rgba(8,16,30,0.45);
+  --shadow-1: 0 8px 30px rgba(2,6,23,0.6);
+  --focus-ring: 0 6px 18px rgba(6,89,222,0.18);
+}
 
-  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-  input[type="text"],input[type="email"],input[type="tel"],input[type="url"],select,textarea{
-    width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:transparent;color:inherit;font-size:14px;outline:none;
-  }
-  input:focus,textarea:focus,select:focus{ box-shadow:0 6px 18px rgba(37,99,235,0.08);transform:translateY(-1px) }
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce){
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
 
-  textarea{min-height:110px;resize:vertical}
-  .full{grid-column:1 / -1}
-  .hint{font-size:12px;color:var(--muted);margin-top:8px}
+/* Basic resets */
+*{box-sizing:border-box}
+html,body{height:100%}
+html{font-family:var(--ff-sans); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+body{
+  margin:0;
+  background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%);
+  color:var(--text);
+  padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
+  font-size: clamp(0.95rem, 1vw + 0.6rem, 1.05rem);
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%; /* prevent iOS auto-zoom */
+}
 
-  .btn{
-    display:inline-flex;gap:10px;align-items:center;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;
-  }
-  .ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:9px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
-  .muted{color:var(--muted)}
+/* Container/grid (mobile first) */
+.wrap{
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ui-gap);
+  align-items: start;
+  padding: 12px;
+}
+@media (min-width: 980px){
+  .wrap{ grid-template-columns: 1fr 380px; padding: 20px; }
+}
 
-  .side{position:sticky;top:20px}
-  .logo{display:flex;gap:12px;align-items:center}
-  .mark{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+/* Cards */
+.card{
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.5vw, 20px);
+  box-shadow: var(--shadow-1);
+  border: 1px solid rgba(15,23,42,0.04);
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms;
+  will-change: transform, box-shadow;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+}
 
-  /* Terms modal (light) */
-  .modal-backdrop{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(2,6,23,0.35);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
-  .modal{max-width:920px;width:100%;max-height:88vh;overflow:auto;border-radius:12px;padding:22px;background:var(--card);box-shadow:0 20px 60px rgba(2,6,23,0.08);border:1px solid rgba(15,23,42,0.04)}
-  .modal h2{margin-top:0}
-  .modal .content{padding:8px 0;color:#0b1220}
+/* Card hover lift on capable devices only */
+@media (hover: hover) and (pointer: fine){
+  .card:hover{ transform: translateY(-6px); box-shadow: 0 18px 46px rgba(17,24,39,0.10); }
+}
 
-  /* PRELOADER */
-  #preloader{position:fixed;inset:0;background:linear-gradient(180deg,#ffffff,#e9f4ff);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column}
-  .brand-spin{width:84px;height:84px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:28px;box-shadow:0 12px 44px rgba(37,99,235,0.12)}
-  .loader-dot{margin-top:14px;display:flex;gap:8px}
-  .loader-dot span{width:10px;height:10px;border-radius:50%;background:rgba(3,7,18,0.18);display:inline-block;animation:jump 1s infinite ease-in-out}
-  .loader-dot span:nth-child(1){animation-delay:0s}
-  .loader-dot span:nth-child(2){animation-delay:0.12s}
-  .loader-dot span:nth-child(3){animation-delay:0.24s}
-  @keyframes jump{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+/* Headings & small copy */
+header h1{ margin:0; font-size: clamp(1.05rem, 1.3vw + 0.9rem, 1.25rem); font-weight:700; }
+header p{ margin:6px 0 0 0; color:var(--muted); font-size: .88rem; }
 
-  /* overlay spinner during submit */
-  .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:90;background:rgba(255,255,255,0.6)}
-  .spinner{width:46px;height:46px;border-radius:50%;border:5px solid rgba(2,6,23,0.08);border-top-color:var(--accent);animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+/* Form layout */
+form{ margin-top: 12px; }
+.grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 680px){ .grid{ grid-template-columns: 1fr; } }
 
-  /* success box */
-  .success{position:fixed;right:18px;bottom:18px;width:360px;z-index:95;display:none;background:var(--card);padding:16px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.06);border:1px solid rgba(15,23,42,0.04)}
-  .success.visible{display:block}
-  .cta-row{display:flex;gap:8px;justify-content:center;margin-top:12px}
+/* Labels + controls */
+label{ display:block; font-size: .88rem; color:var(--muted); margin-bottom:6px; }
+input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea {
+  width:100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(15,23,42,0.06);
+  background: transparent;
+  color: inherit;
+  font-size: 0.95rem;
+  outline:none;
+  transition: box-shadow 180ms, transform 180ms;
+  -webkit-appearance: none;
+  appearance: none;
+}
 
-  .file-input{display:flex;align-items:center;gap:10px}
-  .file-name{font-size:13px;color:var(--muted)}
-  footer{margin-top:18px;color:var(--muted);font-size:12px;text-align:center}
+/* Prevent iOS zoom on focus by ensuring font-size >= 16px on touch inputs */
+@media (max-width: 420px){
+  input, textarea, select { font-size: 16px; }
+}
 
-  /* Preloader enhancements */
-  #preloader .brand-spin svg { display:block; }
-  /* small responsive tweaks */
-  @media (max-width:600px) {
-    .brand-spin{width:64px;height:64px}
-    .success{right:12px;left:12px;width:auto}
-  }
+input:focus, textarea:focus, select:focus{
+  box-shadow: var(--focus-ring);
+  transform: translateY(-1px);
+  border-color: rgba(37,99,235,0.18);
+}
+
+/* accessible keyboard focus */
+:focus{ outline: none; }
+:focus-visible{ outline: none; box-shadow: var(--focus-ring); border-radius: 10px; }
+
+/* Textareas */
+textarea{ min-height: 110px; resize: vertical; }
+
+/* utility */
+.full{ grid-column: 1 / -1; }
+.hint{ font-size: .82rem; color: var(--muted); margin-top:8px; }
+
+/* Buttons */
+.btn{
+  display:inline-flex;
+  gap:10px;
+  align-items:center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border:none;
+  cursor:pointer;
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color: white;
+  font-weight:700;
+  font-size: 0.95rem;
+  transition: transform 150ms ease, box-shadow 150ms;
+  box-shadow: 0 6px 20px rgba(37,99,235,0.08);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active{ transform: translateY(1px) scale(0.995); opacity:.98; }
+
+.ghost{
+  background: transparent;
+  border: 1px solid rgba(15,23,42,0.06);
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: var(--muted);
+  cursor:pointer;
+}
+
+/* Make primary controls full width on small screens */
+@media (max-width: 600px){
+  .btn, .ghost{ width:100%; justify-content:center; }
+}
+
+/* Side area behaviour */
+.side{ position: sticky; top: 20px; align-self: start; }
+@media (max-width: 980px){ .side{ position: relative; top: auto; margin-top: 8px; } }
+
+.logo{ display:flex; gap:12px; align-items:center; }
+.mark{ width:46px; height:46px; border-radius:10px; background: linear-gradient(135deg,var(--accent),var(--accent-2)); display:flex; align-items:center; justify-content:center; color:white; font-weight:800; }
+
+/* Modal/backdrop */
+.modal-backdrop{
+  position: fixed; inset: 0; background: rgba(2,6,23,0.35);
+  display: none; align-items:center; justify-content:center;
+  z-index: 60; padding: 20px;
+}
+.modal{
+  max-width: 920px; width: 100%; max-height: 88vh; overflow:auto;
+  border-radius: 12px; padding: 22px; background: var(--card);
+  box-shadow: 0 20px 60px rgba(2,6,23,0.08); border: 1px solid rgba(15,23,42,0.04);
+}
+.modal h2{ margin-top:0; }
+.modal .content{ padding:8px 0; color: var(--text); }
+
+/* Preloader */
+#preloader{
+  position: fixed; inset: 0;
+  background: linear-gradient(180deg, var(--card), #e9f4ff);
+  display:flex; align-items:center; justify-content:center; z-index:9999; flex-direction:column;
+}
+.brand-spin{
+  width: 84px; height:84px; border-radius:16px; background: linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:28px;
+  box-shadow: 0 12px 44px rgba(37,99,235,0.12);
+}
+.loader-dot{ margin-top:14px; display:flex; gap:8px; }
+.loader-dot span{
+  width:10px; height:10px; border-radius:50%; background: rgba(3,7,18,0.18); display:inline-block;
+  animation: jump 1s infinite ease-in-out;
+}
+.loader-dot span:nth-child(1){ animation-delay:0s }
+.loader-dot span:nth-child(2){ animation-delay:0.12s }
+.loader-dot span:nth-child(3){ animation-delay:0.24s }
+
+@keyframes jump{ 0%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(0) } }
+
+/* Overlay spinner */
+.overlay{
+  position: fixed; inset: 0; display:none; align-items:center; justify-content:center; z-index:90;
+  background: rgba(255,255,255,0.6);
+}
+.spinner{
+  width:46px; height:46px; border-radius:50%;
+  border:5px solid rgba(2,6,23,0.08); border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin{ to { transform: rotate(360deg) } }
+
+/* Success toast */
+.success{
+  position: fixed; right: 18px; bottom: 18px; width: 360px; z-index:95; display:none;
+  background: var(--card); padding:16px; border-radius:12px; box-shadow: 0 10px 40px rgba(2,6,23,0.06);
+  border:1px solid rgba(15,23,42,0.04);
+}
+.success.visible{ display:block; }
+.cta-row{ display:flex; gap:8px; justify-content:center; margin-top:12px; }
+
+/* File input helpers */
+.file-input{ display:flex; align-items:center; gap:10px; }
+.file-name{ font-size: .82rem; color: var(--muted); }
+
+/* Footer */
+footer{ margin-top:18px; color:var(--muted); font-size: .82rem; text-align:center; }
+
+/* small responsive tweaks */
+@media (max-width:600px) {
+  .brand-spin{ width:64px; height:64px; font-size:22px; }
+  .success{ right:12px; left:12px; width:auto; }
+}
+
+/* Utility helpers */
+.row{ display:flex; gap:12px; align-items:center; }
+.stack{ display:flex; flex-direction:column; gap:8px; }
+.center{ display:flex; align-items:center; justify-content:center; }
+
+/* small visual polish */
+.muted{ color: var(--muted); font-size: .9rem; }
+
+/* End of stylesheet */
+
+
+
 </style>
 </head>
 <body>
@@ -206,7 +374,7 @@
           <div class="full">
             <label>Items selected by the brand</label>
             <div style="padding:10px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:linear-gradient(180deg,#fff,#fbfdff);font-weight:600">
-              20 items selected by the brand 
+              20 items selected by the brand
             </div>
             <div class="hint">The brand will select and provide 20 items for this collaboration. Products are provided tax-free; local dispatch/carrier handling fees (if any) required by a local agent are the influencer’s responsibility unless agreed otherwise.</div>
           </div>
@@ -217,7 +385,7 @@
               <input id="mediaKit" name="mediaKit" type="file" accept=".pdf,.png,.jpg,.jpeg,.zip" />
               <div class="file-name muted" id="fileName">No file chosen</div>
             </div>
-
+            <div class="hint">Files are not uploaded by this sample — integrate server-side upload for production.</div>
           </div>
 
           <!-- Payment section -->
@@ -306,7 +474,6 @@
     <aside class="side">
       <div class="card">
         <div class="logo">
-          <div class="mark">P</div>
           <div>
             <div style="font-weight:800">Partnerships Team</div>
             <div class="muted" style="font-size:13px">We evaluate applications and will respond.</div>
@@ -369,139 +536,219 @@
   </div>
 
 <script>
-  // ===== Configuration =====
-  const BRAND_EMAIL = "partnerships@yourbrand.com"; // <-- change to real brand email if needed
+(function () {
+  'use strict';
 
-  // Elements
-  const preloader = document.getElementById('preloader');
-  const app = document.getElementById('app');
-  const formEl = document.getElementById('form');
-  const overlay = document.getElementById('overlay');
-  const success = document.getElementById('success');
-  const successText = document.getElementById('successText');
-  const copyBtn = document.getElementById('copyBtn');
-  const downloadBtn2 = document.getElementById('downloadBtn2');
-  const openMailBtn = document.getElementById('openMailBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const fileInput = document.getElementById('mediaKit');
-  const fileName = document.getElementById('fileName');
-  const yearEl = document.getElementById('year');
-  const brandEmailDisplay = document.getElementById('brandEmailDisplay');
+  // ======= CONFIG =======
+  const BRAND_EMAIL = 'partnerships@yourbrand.com'; // <-- change to real brand email
 
-  yearEl.textContent = new Date().getFullYear();
-  brandEmailDisplay.textContent = BRAND_EMAIL;
+  // ======= DOM SHORTCUT =======
+  const byId = (id) => document.getElementById(id);
 
-  // Remove preloader when page fully loaded
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      if(preloader){
-        preloader.style.transition = "opacity .28s ease";
-        preloader.style.opacity = 0;
-        preloader.setAttribute('aria-hidden','true');
-        setTimeout(()=> preloader.style.display = "none", 320);
+  // ======= ELEMENTS (may be null, guarded later) =======
+  const preloader = byId('preloader');
+  const app = byId('app');
+  const formEl = byId('form');
+  const overlay = byId('overlay');
+  const success = byId('success');
+  const successText = byId('successText');
+  const copyBtn = byId('copyBtn');
+  const downloadBtn2 = byId('downloadBtn2');
+  const openMailBtn = byId('openMailBtn');
+  const downloadBtn = byId('downloadBtn');
+  const clearBtn = byId('clearBtn');
+  const fileInput = byId('mediaKit');
+  const fileName = byId('fileName');
+  const yearEl = byId('year');
+  const brandEmailDisplay = byId('brandEmailDisplay');
+  const modal = byId('modal');
+  const openTerms = byId('openTerms');
+  const closeModal = byId('closeModal');
+  const previewTerms = byId('previewTerms');
+  const copyInstructionsBtn = byId('copyInstructions');
+
+  // ======= Safe DOM assignments =======
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  if (brandEmailDisplay) brandEmailDisplay.textContent = BRAND_EMAIL;
+
+  // ======= Utilities =======
+  async function copyToClipboard(text) {
+    if (!text) return false;
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return true;
+      } catch (e2) {
+        return false;
       }
-      app.style.visibility = "visible";
-      app.style.opacity = 1;
-    }, 500);
-  });
+    }
+  }
 
-  // Inject polished Terms & Conditions using innerHTML
-  (function injectTerms(){
+  function downloadText(filename, text) {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function openMailDraft(subject = '', body = '') {
+    const mailto = `mailto:${encodeURIComponent(BRAND_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  }
+
+  // Expose small global APIs (used by other parts of the page)
+  window.showOverlay = (show = true) => {
+    if (!overlay) return;
+    overlay.style.display = show ? 'flex' : 'none';
+    overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+  };
+
+  window.showSuccess = (msg = 'Saved', timeout = 3500) => {
+    if (!success) return;
+    successText ? (successText.innerHTML = msg) : (success.innerHTML = msg);
+    success.classList.add('visible');
+    setTimeout(() => success.classList.remove('visible'), timeout);
+  };
+
+  window.toggleTheme = () => {
+    const root = document.documentElement;
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  };
+
+  // ======= Inject Terms content =======
+  (function injectTerms() {
+    const target = byId('tncContent');
+    if (!target) return;
     const TERMS = `
       <section aria-label="Partnership Terms">
         <h3 style="margin-top:0">Contract Terms — Summary</h3>
-
         <p><strong>1. Engagement & Payment</strong><br>
         The Company engages the Contractor (the Influencer) to produce and publish promotional content in accordance with the scope agreed between the parties. The Influencer agrees to perform services promptly and professionally upon receipt of any materials or instructions. Proposed compensation is <strong>$3,000.00 per month</strong> with a one-time sign-on bond of <strong>$1,000.00</strong>, payable after onboarding and dispatch confirmation as set out below. Payment timing, approved reimbursements and late-payment remedies follow the Company’s standard payment procedures.</p>
-
         <p><strong>2. Work Standards & Deliverables</strong><br>
         All deliverables must comply with the Company’s brand guidelines, content specifications and deadlines. The Influencer must ensure professional presentation and follow the creative brief and any delivery schedules provided by the Company.</p>
-
         <p><strong>3. Ownership & License</strong><br>
         The Influencer retains ownership of any original creative materials they produce. By entering this Agreement the Influencer grants the Company a perpetual, worldwide, non-exclusive, royalty-free license to use, reproduce, modify and publish the content for brand marketing across any medium.</p>
-
         <p><strong>4. Term</strong><br>
         Unless otherwise agreed in writing, the term is twelve (12) months from the Effective Date. Any renewal or extension requires the written agreement of both parties.</p>
-
         <p><strong>5. Shipping, Taxes & Local Dispatch Fees</strong><br>
         The Company will select and supply the products for the collaboration. <strong>A total of twenty (20) items will be selected by the brand.</strong> All products supplied under this Agreement are provided tax-free (the Company covers any product duties and taxes where applicable). <strong>However, local dispatch or carrier handling fees that may be required by a local delivery agent in the Influencer’s city or region are the responsibility of the Influencer.</strong> The Company will notify the Influencer in advance if such a local dispatch fee is anticipated and will provide guidance on payment and any available reimbursement process. If the Company offers to reimburse such fees, the Influencer must submit valid receipts or proof of payment in accordance with the reimbursement procedures.</p>
-
         <p><strong>6. Bond & Payout Timing</strong><br>
         Upon confirmation that products have been dispatched and after the Influencer completes onboarding requirements, the Company will release the one-time sign-on bond of <strong>$1,000.00</strong>. Bond disbursement will occur within <strong>2–3 business days</strong> following dispatch confirmation and onboarding completion.</p>
-
         <p><strong>7. Verification & Account Integrity</strong><br>
         The Influencer must maintain active and authentic social accounts and may be required to provide platform analytics or verification on request. The use of fraudulent or artificially inflated metrics (including purchased followers, bots, or engagement manipulation) is strictly prohibited and may result in corrective action including suspension or termination of the collaboration.</p>
-
         <p><strong>8. Reimbursement & Expenses</strong><br>
         Reimbursable expenses require prior written approval and must be supported by original receipts or invoices. Approved reimbursements will be processed according to the Company’s payment schedule.</p>
-
         <p><strong>9. Governing Law & Entire Agreement</strong><br>
         This document is a template overview of key terms and does not replace a full written contract. The final Agreement will govern and should be reviewed by legal counsel. Unless otherwise specified, the Agreement is governed by the laws of the jurisdiction in which the Company operates.</p>
-
         <p><strong>10. Acceptance</strong><br>
         By submitting this form the Influencer confirms that they have read, understood and accepted these terms and that they are legally authorized to enter this Agreement.</p>
-
         <p class="muted" style="color:#6b7280;font-size:13px">Disclaimer: These terms constitute a legitimate collaboration agreement. By submitting this form, you acknowledge that you have reviewed, understood, and accepted the terms provided, and are prepared to proceed with the partnership under the conditions outlined.</p>
       </section>
     `;
-    const target = document.getElementById('tncContent');
-    if(target) target.innerHTML = TERMS;
+    target.innerHTML = TERMS;
   })();
 
-  // Modal controls
-  const modal = document.getElementById('modal');
-  const openTerms = document.getElementById('openTerms');
-  const closeModal = document.getElementById('closeModal');
-  const previewTerms = document.getElementById('previewTerms');
+  // ======= Modal controls =======
+  function openModal() {
+    if (!modal) return;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+  }
+  function closeModalFn() {
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  if (openTerms) openTerms.addEventListener('click', openModal);
+  if (previewTerms) previewTerms.addEventListener('click', openModal);
+  if (closeModal) closeModal.addEventListener('click', closeModalFn);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModalFn();
+    });
+  }
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModalFn(); });
 
-  function openModal(){ modal.style.display = "flex"; modal.setAttribute('aria-hidden','false'); }
-  function closeModalFn(){ modal.style.display = "none"; modal.setAttribute('aria-hidden','true'); }
-
-  openTerms.addEventListener('click', openModal);
-  previewTerms.addEventListener('click', openModal);
-  closeModal.addEventListener('click', closeModalFn);
-  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModalFn(); });
-
-  // file name display
-  fileInput.addEventListener('change', ()=>{
-    if(fileInput.files && fileInput.files[0]) fileName.textContent = fileInput.files[0].name;
-    else fileName.textContent = "No file chosen";
+  // ======= Preloader hide =======
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (preloader) {
+        preloader.style.transition = 'opacity .28s ease';
+        preloader.style.opacity = '0';
+        preloader.setAttribute('aria-hidden', 'true');
+        setTimeout(() => { preloader.style.display = 'none'; }, 320);
+      }
+      if (app) {
+        app.style.visibility = 'visible';
+        app.style.opacity = '1';
+      }
+    }, 500);
   });
 
-  // Payment method toggles
-  const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
-  const bankFields = document.getElementById('bankFields');
-  const paypalFields = document.getElementById('paypalFields');
-  const mobileFields = document.getElementById('mobileFields');
+  // Also hide preloader on DOMContentLoaded (in case load event already fired)
+  document.addEventListener('DOMContentLoaded', () => {
+    if (preloader && preloader.style.display !== 'none') preloader.style.display = 'none';
+  });
 
-  function updatePaymentFields(){
-    const sel = document.querySelector('input[name="paymentMethod"]:checked');
-    const val = sel ? sel.value : 'bank';
-    bankFields.style.display = val === 'bank' ? 'block' : 'none';
-    paypalFields.style.display = val === 'paypal' ? 'block' : 'none';
-    mobileFields.style.display = val === 'mobile' ? 'block' : 'none';
-
-    // set required attributes depending on selection
-    document.getElementById('bankName').required = val === 'bank';
-    document.getElementById('accountName').required = val === 'bank';
-    document.getElementById('accountNumber').required = val === 'bank';
-    document.getElementById('routingNumber').required = val === 'bank';
-    document.getElementById('bankCountry').required = val === 'bank';
-
-    document.getElementById('paypalEmail').required = val === 'paypal';
-    document.getElementById('mobileProvider').required = val === 'mobile';
-    document.getElementById('mobileNumber').required = val === 'mobile';
+  // ======= File input: display selected filename =======
+  if (fileInput && fileName) {
+    fileInput.addEventListener('change', () => {
+      fileName.textContent = (fileInput.files && fileInput.files[0]) ? fileInput.files[0].name : 'No file chosen';
+    });
   }
 
-  paymentRadios.forEach(r => r.addEventListener('change', updatePaymentFields));
-  updatePaymentFields();
+  // ======= Payment method toggles =======
+  const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+  const bankFields = byId('bankFields');
+  const paypalFields = byId('paypalFields');
+  const mobileFields = byId('mobileFields');
 
-  // Build summary text
-  function buildSummary(formData){
+  function updatePaymentFields() {
+    const sel = document.querySelector('input[name="paymentMethod"]:checked');
+    const val = sel ? sel.value : 'bank';
+    if (bankFields) bankFields.style.display = val === 'bank' ? 'block' : 'none';
+    if (paypalFields) paypalFields.style.display = val === 'paypal' ? 'block' : 'none';
+    if (mobileFields) mobileFields.style.display = val === 'mobile' ? 'block' : 'none';
+
+    const setReq = (id, req) => { const el = byId(id); if (el) el.required = req; };
+
+    setReq('bankName', val === 'bank');
+    setReq('accountName', val === 'bank');
+    setReq('accountNumber', val === 'bank');
+    setReq('routingNumber', val === 'bank');
+    setReq('bankCountry', val === 'bank');
+
+    setReq('paypalEmail', val === 'paypal');
+    setReq('mobileProvider', val === 'mobile');
+    setReq('mobileNumber', val === 'mobile');
+  }
+
+  if (paymentRadios && paymentRadios.length) {
+    paymentRadios.forEach(r => r.addEventListener('change', updatePaymentFields));
+    updatePaymentFields();
+  }
+
+  // ======= Build summary =======
+  function buildSummary(formData) {
     const paymentMethod = formData.get('paymentMethod') || 'bank';
     const paymentDetails = {};
-    if(paymentMethod === 'bank'){
+    if (paymentMethod === 'bank') {
       paymentDetails.type = 'Bank Transfer';
       paymentDetails.bankName = formData.get('bankName') || '';
       paymentDetails.accountName = formData.get('accountName') || '';
@@ -509,7 +756,7 @@
       paymentDetails.routingNumber = formData.get('routingNumber') || '';
       paymentDetails.branch = formData.get('branch') || '';
       paymentDetails.bankCountry = formData.get('bankCountry') || '';
-    } else if(paymentMethod === 'paypal'){
+    } else if (paymentMethod === 'paypal') {
       paymentDetails.type = 'PayPal';
       paymentDetails.paypalEmail = formData.get('paypalEmail') || '';
     } else {
@@ -535,16 +782,16 @@
       portfolio: formData.get('portfolio') || '',
       availability: formData.get('availability') || '',
       additional: formData.get('additional') || '',
-      mediaKitFile: fileInput.files[0] ? fileInput.files[0].name : 'None',
-      itemsSelectedByBrand: '20 items selected by the brand — influencer does not need to select items',
+      mediaKitFile: (fileInput && fileInput.files[0]) ? fileInput.files[0].name : 'None',
+      itemsSelectedByBrand: '20 items selected by the brand',
       payment: paymentDetails,
       acceptedTerms: formData.get('acceptTnc') ? 'Yes' : 'No',
       submittedAt: (new Date()).toLocaleString()
     };
 
     const lines = [
-      "Partnership Submission",
-      "----------------------",
+      'Partnership Submission',
+      '----------------------',
       `Name: ${summary.name}`,
       `Email: ${summary.email}`,
       `Phone: ${summary.phone}`,
@@ -563,18 +810,18 @@
       `Additional notes: ${summary.additional}`,
       `Media kit (file): ${summary.mediaKitFile}`,
       `${summary.itemsSelectedByBrand}`,
-      "-- Payment details --",
+      '-- Payment details --',
       `Preferred payment method: ${summary.payment.type}`
     ];
 
-    if(summary.payment.type === 'Bank Transfer'){
+    if (summary.payment.type === 'Bank Transfer') {
       lines.push(`Bank name: ${summary.payment.bankName}`);
       lines.push(`Account name: ${summary.payment.accountName}`);
       lines.push(`Account number: ${summary.payment.accountNumber}`);
       lines.push(`Routing number: ${summary.payment.routingNumber}`);
       lines.push(`Branch: ${summary.payment.branch}`);
       lines.push(`Bank country: ${summary.payment.bankCountry}`);
-    } else if(summary.payment.type === 'PayPal'){
+    } else if (summary.payment.type === 'PayPal') {
       lines.push(`PayPal email: ${summary.payment.paypalEmail}`);
     } else {
       lines.push(`Provider: ${summary.payment.provider}`);
@@ -583,123 +830,126 @@
 
     lines.push(`Accepted T&Cs: ${summary.acceptedTerms}`);
     lines.push(`Submitted: ${summary.submittedAt}`);
-    lines.push("----------------------");
-    lines.push("Please copy and paste this summary into an email to the brand address provided by the platform.");
+    lines.push('----------------------');
+    lines.push('Please copy and paste this summary into an email to the brand address provided by the platform.');
 
-    return { object: summary, text: lines.join("\n") };
+    return { object: summary, text: lines.join('\n') };
   }
 
-  // Copy to clipboard
-  async function copyToClipboard(text){
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (err) {
-      try {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed'; ta.style.left = '-9999px';
-        document.body.appendChild(ta); ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        return true;
-      } catch(e2){
-        return false;
+  // ======= Form submit handler =======
+  if (formEl) {
+    formEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!formEl.checkValidity()) {
+        formEl.reportValidity();
+        return;
       }
-    }
+
+      const fd = new FormData(formEl);
+      showOverlay(true);
+
+      const sum = buildSummary(fd);
+
+      // simulate save/processing delay then show success & store latest
+      setTimeout(() => {
+        showOverlay(false);
+        if (success && successText) {
+          success.classList.add('visible');
+          successText.innerHTML = `Your application has been recorded. <strong>Please copy the submission summary</strong> and send it to the brand at <strong>${BRAND_EMAIL}</strong>.`;
+        } else {
+          // fallback toast
+          window.alert(`Submitted. Please send the summary to ${BRAND_EMAIL}`);
+        }
+        window._latestSubmission = sum;
+      }, 900);
+    });
   }
 
-  // Download text
-  function downloadText(filename, text){
-    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  // ======= Button handlers (guarded) =======
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      if (!window._latestSubmission) {
+        const fd = formEl ? new FormData(formEl) : new FormData();
+        window._latestSubmission = buildSummary(fd);
+      }
+      const ok = await copyToClipboard(window._latestSubmission.text);
+      const origText = copyBtn.textContent;
+      copyBtn.textContent = ok ? 'Copied' : 'Copy (failed)';
+      setTimeout(() => { copyBtn.textContent = origText || 'Copy summary'; }, 2500);
+    });
   }
 
-  // Email draft (opens mail client with subject & prefilled short instruction)
-  function openMailDraft(subject, body){
-    const mailto = `mailto:${encodeURIComponent(BRAND_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
+  if (downloadBtn2) {
+    downloadBtn2.addEventListener('click', () => {
+      if (!window._latestSubmission) {
+        const fd = formEl ? new FormData(formEl) : new FormData();
+        window._latestSubmission = buildSummary(fd);
+      }
+      const filename = `partnership-submission-${Date.now()}.txt`;
+      downloadText(filename, window._latestSubmission.text);
+    });
   }
 
-  // Form submit handler
-  formEl.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    if(!formEl.checkValidity()){
-      formEl.reportValidity();
-      return;
+  if (openMailBtn) {
+    openMailBtn.addEventListener('click', () => {
+      if (!window._latestSubmission) {
+        const fd = formEl ? new FormData(formEl) : new FormData();
+        window._latestSubmission = buildSummary(fd);
+      }
+      const subject = `Partnership submission — ${window._latestSubmission.object.name || 'Unnamed'}`;
+      const body = 'Hello,%0D%0A%0D%0APlease find my partnership submission below (paste the copied summary here):%0D%0A%0D%0A';
+      openMailDraft(subject, body);
+    });
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      const fd = formEl ? new FormData(formEl) : new FormData();
+      const sum = buildSummary(fd);
+      downloadText(`partnership-submission-${Date.now()}.txt`, sum.text);
+    });
+  }
+
+  if (clearBtn && formEl) {
+    clearBtn.addEventListener('click', () => formEl.reset());
+  }
+
+  if (copyInstructionsBtn) {
+    copyInstructionsBtn.addEventListener('click', async () => {
+      const instr = `After you submit: 1) Click "Copy summary" 2) Open your email client and paste the content into a new message to ${BRAND_EMAIL} 3) Send.`;
+      const ok = await copyToClipboard(instr);
+      if (ok) {
+        // use subtle UI feedback if you prefer; fallback to alert
+        alert('Instructions copied to clipboard. Paste them where useful.');
+      } else {
+        alert('Copy failed. Please copy manually: ' + instr);
+      }
+    });
+  }
+
+  // ======= Click delegation for any modal-backdrop triggers using data attributes =======
+  document.addEventListener('click', (e) => {
+    const openBtn = e.target.closest('[data-open-modal]');
+    if (openBtn) {
+      const id = openBtn.getAttribute('data-open-modal');
+      const backdrop = document.querySelector(`#${id}.modal-backdrop`);
+      if (backdrop) backdrop.style.display = 'flex';
     }
 
-    const fd = new FormData(formEl);
-    overlay.style.display = 'flex';
-    overlay.setAttribute('aria-hidden','false');
-
-    const sum = buildSummary(fd);
-
-    setTimeout(async ()=>{
-      overlay.style.display = 'none';
-      overlay.setAttribute('aria-hidden','true');
-
-      success.classList.add('visible');
-      successText.innerHTML = `Your application has been recorded. <strong>Please copy the submission summary</strong> and send it to the brand at <strong>${BRAND_EMAIL}</strong>.`;
-
-      window._latestSubmission = sum;
-    }, 900);
-  });
-
-  // Buttons
-  copyBtn.addEventListener('click', async ()=>{
-    if(!window._latestSubmission){
-      const fd = new FormData(formEl);
-      window._latestSubmission = buildSummary(fd);
+    const closeBtn = e.target.closest('[data-close-modal]');
+    if (closeBtn) {
+      const backdrop = closeBtn.closest('.modal-backdrop');
+      if (backdrop) backdrop.style.display = 'none';
     }
-    const ok = await copyToClipboard(window._latestSubmission.text);
-    copyBtn.textContent = ok ? "Copied" : "Copy (failed)";
-    setTimeout(()=> copyBtn.textContent = "Copy summary", 2500);
-  });
 
-  downloadBtn2.addEventListener('click', ()=>{
-    if(!window._latestSubmission){
-      const fd = new FormData(formEl);
-      window._latestSubmission = buildSummary(fd);
+    if (e.target.classList && e.target.classList.contains('modal-backdrop')) {
+      e.target.style.display = 'none';
     }
-    const filename = `partnership-submission-${Date.now()}.txt`;
-    downloadText(filename, window._latestSubmission.text);
   });
 
-  openMailBtn.addEventListener('click', ()=>{
-    if(!window._latestSubmission){
-      const fd = new FormData(formEl);
-      window._latestSubmission = buildSummary(fd);
-    }
-    const subject = `Partnership submission — ${window._latestSubmission.object.name || 'Unnamed'}`;
-    const body = "Hello,\n\nPlease find my partnership submission below (paste the copied summary here):\n\n";
-    openMailDraft(subject, body);
-  });
-
-  // top download button (from form area)
-  downloadBtn.addEventListener('click', ()=>{
-    const fd = new FormData(formEl);
-    const sum = buildSummary(fd);
-    downloadText(`partnership-submission-${Date.now()}.txt`, sum.text);
-  });
-
-  clearBtn.addEventListener('click', ()=> formEl.reset());
-
-  // copy instructions button in aside
-  document.getElementById('copyInstructions').addEventListener('click', ()=>{
-    const instr = `After you submit: 1) Click "Copy summary" 2) Open your email client and paste the content into a new message to ${BRAND_EMAIL} 3) Send.`;
-    copyToClipboard(instr);
-    alert("Instructions copied to clipboard. Paste them where useful.");
-  });
-
-  // accessibility: close modal with Escape
-  window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModalFn(); });
-
+  // Done initial setup
+})();
 </script>
+
 </body>
 </html>
